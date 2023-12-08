@@ -4,7 +4,7 @@ from torch import nn
 import torch.nn.functional as F
 from torch import Tensor
 from typing import Callable, Any, Optional, List
-from my_lib.noiseq import QuantOps as Q
+from my_lib.nipq import QuantOps as Q
 
 __all__ = ['MobileNetV2', 'mobilenet_v2']
 

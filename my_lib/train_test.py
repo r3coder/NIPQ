@@ -523,7 +523,6 @@ def train_aux_target_avgbit(train_loader, model, model_ema, model_t, criterion, 
         model_t.cuda()
 
     end = time.time()
-
     for i, (input, target) in enumerate(train_loader):
         # measure data loading time
         data_time.update(time.time() - end)

@@ -26,13 +26,13 @@ from my_lib.train_test import (
 import pickle
 import torch.nn.functional as F
 parser = argparse.ArgumentParser()
-parser.add_argument("--data", help='dataset directory', default='/SSD/ILSVRC2012')
+parser.add_argument("--data", help='dataset directory', default='./dataset/') # /SSD/ILSVRC2012
 parser.add_argument("--ckpt", help="checkpoint directory", default='./checkpoint')
 
 parser.add_argument("--model", 
                     choices=["mobilenetv2"])
 parser.add_argument("--dataset", default="cifar100", 
-                    choices=['imagenet'])
+                    choices=['imagenet', 'cifar100'])
 
 parser.add_argument("--lr", default=0.4, type=float)
 parser.add_argument("--decay", default=4e-5, type=float)
@@ -63,6 +63,10 @@ if args.dataset == 'imagenet':
     valid_size = 0 
     test_loader, train_loader, _ = get_loader(data_root, test_batch=100, train_batch=args.batch, valid_size=valid_size , num_workers=16, random_seed=7777)
     class_num = 1000
+if args.dataset == 'cifar100':
+    from my_lib.datasets.cifar100 import get_loader
+    test_loader, train_loader, _ = get_loader(data_root, test_batch=100, train_batch=args.batch)
+    class_num = 100
 else:
     raise NotImplementedError()
 
@@ -70,18 +74,30 @@ print("==> Prepare model..")
 if args.model == "mobilenetv2":
     if args.dataset == 'imagenet':
         from models.MobileNetV2_nq import mobilenet_v2
-        model = mobilenet_v2()
+        model = mobilenet_v2(num_classes=class_num)
         ckpt = './checkpoint/mobilenetv2_baseline/mobilenetv2_imagenet_best.pth'
         # kd boost
         if args.ts : 
             ckpt = './checkpoint/mobilenetv2_kdboost/mobilenetv2_imagenet_best.pth'
+    if args.dataset == 'cifar100':
+        from models.MobileNetV2_nq import mobilenet_v2
+        model = mobilenet_v2(num_classes=class_num)
+        ckpt = './checkpoint/mobilenetv2_baseline/mobilenetv2_cifar100_best.pth'
+        # kd boost
+        if args.ts : 
+            ckpt = './checkpoint/mobilenetv2_kdboost/mobilenetv2_cifar100_best.pth'
 else:
         raise NotImplementedError()
 
 model_ema=None
 
-ckpt = torch.load(ckpt) #NOTE
-model.load_state_dict(ckpt, False) #NOTE
+print(model)
+
+# Not implemented
+# ckpt = torch.load(ckpt) #NOTE
+# model.load_state_dict(ckpt, False) #NOTE
+
+
 # criterion = nn.CrossEntropyLoss()
 # acc_base, _ = test(test_loader, model.cuda(), criterion, 0, False)
 # print(f'** Pre-train model acc : {acc_base}')
@@ -89,10 +105,19 @@ model.load_state_dict(ckpt, False) #NOTE
 
 if args.ts :
     print('==> Using teacher model')
-    import torchvision
-    from torchvision.models.efficientnet import efficientnet_b0
-    model_t = efficientnet_b0(pretrained=True)
-
+    if class_num != 1000:
+        print(f"** Class #${class_num}, disabling teacher model...")
+        """from models.MobileNetV2_nq import mobilenet_v2
+        model_t = mobilenet_v2(pretrained=True, num_classes=class_num)
+        ckpt = './checkpoint/mobilenetv2_baseline/mobilenetv2_cifar100_best.pth'
+        ckpt = torch.load(ckpt)
+        """
+        model_t = None
+        args.ts = False
+    else:
+        import torchvision
+        from torchvision.models.efficientnet import efficientnet_b0
+        model_t = efficientnet_b0(pretrained=True, num_classes=class_num)
     for params in model_t.parameters():
         params.requires_grad = False
 

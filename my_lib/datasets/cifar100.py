@@ -98,6 +98,6 @@ def get_loader(root, test_batch, train_batch,
             num_workers=workers, pin_memory=True)
         loaders["test"] = test_loader
 
-    return loaders
+    return loaders["test"], loaders["train"], None
 
     
