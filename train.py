@@ -81,12 +81,8 @@ if args.model == "mobilenetv2":
         if args.ts : 
             ckpt = './checkpoint/mobilenetv2_kdboost/mobilenetv2_imagenet_best.pth'
     if args.dataset == 'cifar100':
-        
-        print(f"** using cifar100_mobilenetv2_x1_0...")
-        model = torch.hub.load("chenyaofo/pytorch-cifar-models", "cifar100_mobilenetv2_x1_0", pretrained=False)
-        # from models.MobileNetV2_nq import mobilenet_v2
-        # model = mobilenet_v2(num_classes=class_num)
-
+        from models.MobileNetV2_nq import mobilenet_v2
+        model = mobilenet_v2(num_classes=class_num)
         ckpt = './checkpoint/mobilenetv2_baseline/mobilenetv2_cifar100_best.pth'
         # kd boost
         if args.ts : 
