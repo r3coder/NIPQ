@@ -34,7 +34,7 @@ def enable_running_stats(model):
 
     model.apply(_enable)
 
-_print_freq = 10
+_print_freq = 100 # 10
 _temp_dir = tempfile.mkdtemp()
 
 
@@ -206,11 +206,11 @@ def test(val_loader, model, criterion, epoch, train=False, verbose=True):
                 'Prec@1 {top1.val:.3f} ({top1.avg:.3f})\t'
                 'Prec@5 {top5.val:.3f} ({top5.avg:.3f})'.format(
                     i+1, len(val_loader), batch_time=batch_time, loss=losses,
-                    top1=top1, top5=top5))
+                    top1=top1, top5=top5), flush=True)
 
     if verbose:
         print(' * Prec@1 {top1.avg:.3f} Prec@5 {top5.avg:.3f}'
-            .format(top1=top1, top5=top5))
+            .format(top1=top1, top5=top5), flush=True)
 
     return top1.avg, losses.avg
 
