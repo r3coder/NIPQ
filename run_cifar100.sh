@@ -1,8 +1,10 @@
 #!/bin/bash
-batch='256'
-lr='0.04'
+# 256
+# 0.04
+batch='128' 
+lr='0.01'
 decay='1e-5'
-epoch='40'
+epoch='100'
 
 model='mobilenetv2'
 dataset='cifar100'
@@ -29,10 +31,9 @@ mkdir -p ./log
 
 
 python -u train.py \
-        --model $model --mode $mode --target $target --bops_scale ${bops_scale} \
+        --model $model --mode $mode --target $target --bops_scale ${bops_scale} --ts \
         --warmuplen 3 --ft_epoch 3 \
         --dataset $dataset --lr $lr --decay $decay  \
-        --epoch $epoch --batch $batch --a_scale $a_scale --w_scale $w_scale\
-        --ckpt ./checkpoint/${date}/${model}_${dataset}_${mode}_${epoch}_${a_scale}_${w_scale}_target_${target}
-
-        # --ts \
+        --epoch $epoch --batch $batch --a_scale $a_scale --w_scale $w_scale
+        # --ckpt ./checkpoint/${date}/${model}_${dataset}_${mode}_${epoch}_${a_scale}_${w_scale}_target_${target} \
+        # |& tee ./log/${date}/${model}_${dataset}_${mode}_${epoch}_${a_scale}_${w_scale}_target_${target}.log
