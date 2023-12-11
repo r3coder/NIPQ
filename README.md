@@ -20,6 +20,10 @@ For experimental details and hyper-paramters, please refer to the paper and `tra
 
 For imagenet training, please refer author's original code
 
+## Details on this fork
+
+Since cifar-100 has different output dimension, it uses different teacher model([repvgg_a2](https://github.com/chenyaofo/pytorch-cifar-models)).
+
 ## Citation
 ```BibTex  
 @InProceedings{Shin_2023_CVPR,
