@@ -41,8 +41,8 @@ def lsq_forward(data, bit, alpha, sym:bool):
 
 
 # sampling based 
-@torch.jit.script
-def noise_quant(data, bit, alpha, is_training, noise, sym:bool, is_stochastic=True, is_discretize=True):
+# @torch.jit.script
+def noise_quant(data, bit, alpha, is_training:bool, noise, sym:bool, is_stochastic:bool=True, is_discretize:bool=True):
     N_BIN = 256
     bit = 2 + torch.sigmoid(bit)*12
 
