@@ -28,6 +28,7 @@ import torch.nn.functional as F
 parser = argparse.ArgumentParser()
 parser.add_argument("--data", help='dataset directory', default='./dataset/') # /SSD/ILSVRC2012
 parser.add_argument("--ckpt", help="checkpoint directory", default='./checkpoint')
+parser.add_argument("--ckpt_interval", default=10, type=int, help='checkpoint interval')
 
 parser.add_argument("--model", 
                     choices=["mobilenetv2"])
@@ -105,14 +106,12 @@ print(model)
 
 if args.ts :
     print('==> Using teacher model')
-    if class_num != 1000:
-        print(f"** Class #${class_num}, disabling teacher model...")
-        """from models.MobileNetV2_nq import mobilenet_v2
-        model_t = mobilenet_v2(pretrained=True, num_classes=class_num)
-        ckpt = './checkpoint/mobilenetv2_baseline/mobilenetv2_cifar100_best.pth'
-        ckpt = torch.load(ckpt)
-        """
-        model_t = None
+    if class_num != 1000: # This will popup error if class num is not 100
+        print(f"** Class #${class_num}, using cifar100_repvgg_a2...")
+        model_t = torch.hub.load("chenyaofo/pytorch-cifar-models", "cifar100_repvgg_a2", pretrained=True)
+        for params in model_t.parameters():
+            params.requires_grad = False
+
         args.ts = False
     else:
         import torchvision
@@ -256,10 +255,11 @@ for epoch in range(args.epoch):
     
     print('==> Save the model')  
     if args.ckpt is not None:
-        create_checkpoint(
-            optimizer, epoch, ckpt_root,
-            model, is_best, best_acc, 
-            model_ema, is_best_ema, best_acc_ema, prefix=prefix)
+        if epoch % args.ckpt_interval == 0:
+            create_checkpoint(
+                optimizer, epoch, ckpt_root,
+                model, is_best, best_acc, 
+                model_ema, is_best_ema, best_acc_ema, prefix=prefix)
     scheduler.step()                       
 
 
