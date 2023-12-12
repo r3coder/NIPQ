@@ -11,10 +11,11 @@ Original repository doesn't supported the cifar-100, so this repository tried to
 
 1. Install [Docker](https://docs.docker.com/engine/install/).
 2. Build docker image as `docker build . -t $(whoami)/nipq` will create proper docker image
-3. Run `docker.sh` shall open bash for docker image.
-4. Run `./run_cifar100.sh ` 
- - Optimize average bit-width: `./run.cifar100.sh avgbit`
- - Optimize bops: `./run.cifar100.sh bops`
+3. Run `./docker.sh` shall open bash for docker image.
+4. `cd nipq/`
+5. Run `./run_cifar100.sh [avgbit/bops]` 
+- Optimize average bit-width: `./run.cifar100.sh avgbit`
+- Optimize bops: `./run.cifar100.sh bops`
 
 For experimental details and hyper-paramters, please refer to the paper and `train.py` file
 
