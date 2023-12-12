@@ -140,16 +140,28 @@ class MobileNetV2(nn.Module):
         last_channel = 1280
 
         if inverted_residual_setting is None:
-            inverted_residual_setting = [
-                # t, c, n, s
-                [1, 16, 1, 1],
-                [6, 24, 2, 1],  # NOTE: change stride 2 -> 1 for CIFAR10/100
-                [6, 32, 3, 2],
-                [6, 64, 4, 2],
-                [6, 96, 3, 1],
-                [6, 160, 3, 2],
-                [6, 320, 1, 1],
-            ]
+            if num_classes == 1000:
+                inverted_residual_setting = [
+                    # t, c, n, s
+                    [1, 16, 1, 1],
+                    [6, 24, 2, 2],
+                    [6, 32, 3, 2],
+                    [6, 64, 4, 2],
+                    [6, 96, 3, 1],
+                    [6, 160, 3, 2],
+                    [6, 320, 1, 1],
+                ]
+            else:
+                inverted_residual_setting = [
+                    # t, c, n, s
+                    [1, 16, 1, 1],
+                    [6, 24, 2, 1],  # change stride 2 -> 1 for CIFAR10/100
+                    [6, 32, 3, 2],
+                    [6, 64, 4, 2],
+                    [6, 96, 3, 1],
+                    [6, 160, 3, 2],
+                    [6, 320, 1, 1],
+                ]
 
         # only check the first element, assuming user knows t,c,n,s are required
         if len(inverted_residual_setting) == 0 or len(inverted_residual_setting[0]) != 4:
